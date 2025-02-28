@@ -1,20 +1,21 @@
 use std::fs;
 use phf::phf_map;
 
-
 //use rustrict::CensorStr;
 
 
 static FILES: phf::Map<&'static str, &'static str> = phf_map! {
     "sexual" => r"C:\Users\User\Desktop\bad_words_filter\bad_words_filter\sexual.txt",
     "strong" => r"C:\Users\User\Desktop\bad_words_filter\bad_words_filter\stongswords.txt",
+    //"political" => r"C:\Users\User\Desktop\bad_words_filter\bad_words_filter\political.txt",
 };
 
 fn main() {
-    let text = "матерное слово  ";
-    let chosen_categories: Vec<&str> = vec!["sexual"];
+    let text = "хуеверт";
+    let chosen_categories: Vec<&str> = vec!["sexual", "strong"];
     text_check_worker(text, &chosen_categories);
 }
+
 
 fn text_check_worker(text: &str, chosen_categories: &Vec<&str>) {
     let words: &Vec<&str> = &text.split_whitespace().collect();
@@ -26,6 +27,8 @@ fn text_check_worker(text: &str, chosen_categories: &Vec<&str>) {
         }
     }
 }
+
+
 
 fn check_text(words: &Vec<&str>, file_name: String) -> bool {
     for word in words {
