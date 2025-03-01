@@ -96,5 +96,15 @@ mod tests {
         assert_eq!(result, None);
     }
 
+    #[test]
+    fn test_time() {
+        let text = fs::read_to_string(r"C:\Users\User\Desktop\bad_words_filter\bad_words_filter\filter_data\test_text.txt").expect("Unable to read file");
+        let chosen_categories: Vec<String> = vec!["sexual".to_string(), "strong".to_string()];
+        text_check_worker_mltr(
+            &text, 
+            chosen_categories
+        );
+    }
+
 
 }
