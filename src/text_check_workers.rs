@@ -4,7 +4,7 @@ mod files_map;
 mod file_servers;
 use std::{sync::{mpsc, Arc}, thread};
 
-use file_servers::{check_text};
+use file_servers::{check_text, check_text_new};
 use files_map::FILES;
 
 
@@ -71,7 +71,7 @@ mod tests {
 
     #[test]
     fn test_strong() {
-        let chosen_categories: Vec<String> = vec!["sexual".to_string(), "strong".to_string()];
+        let chosen_categories: Vec<String> = vec!["strong".to_string()];
         let result = text_check_worker_mltr(
             check_text,
             "блять", 
@@ -82,7 +82,7 @@ mod tests {
 
     #[test]
     fn test_sexual() {
-        let chosen_categories: Vec<String> = vec!["sexual".to_string(), "strong".to_string()];
+        let chosen_categories: Vec<String> = vec!["sexual".to_string()];
         let result = text_check_worker_mltr(
             check_text,
             "пизда", 
@@ -113,7 +113,7 @@ mod benches {
     use test::Bencher;
 
     #[bench]
-    fn test_time_mtl(b: &mut Bencher) {
+    fn test_second_version(b: &mut Bencher) {
         let text = fs::read_to_string(r"C:\Users\User\Desktop\bad_words_filter\bad_words_filter\filter_data\test_text.txt")
             .expect("Unable to read file");
 
@@ -122,7 +122,7 @@ mod benches {
         // Бенчмаркинг
         b.iter(|| {
             text_check_worker_mltr(
-                check_text,
+                check_text_new,
                 &text,
                  chosen_categories.clone()
             ) // Используем clone для передачи
@@ -132,7 +132,7 @@ mod benches {
 
 
     #[bench]
-    fn test_time(b: &mut Bencher) {
+    fn test_first_version(b: &mut Bencher) {
         let text = fs::read_to_string(r"C:\Users\User\Desktop\bad_words_filter\bad_words_filter\filter_data\test_text.txt")
             .expect("Unable to read file");
 

@@ -1,4 +1,4 @@
-use std::{fs, sync::{mpsc, Arc}, thread};
+use std::{collections::HashSet, fs, sync::{mpsc, Arc}, thread};
 
 
 
@@ -10,6 +10,27 @@ pub fn check_text(words: &Vec<&str>, file_name: &str) -> bool {
         }
     }
     return false
+}
+
+
+
+pub fn check_text_new(words: &Vec<&str>, file_name: &str) -> bool {
+    // Чтение содержимого файла
+    let file_contents = fs::read_to_string(file_name).expect("Unable to read file");
+
+    let mut word_set: HashSet<&str> = HashSet::new();
+
+    for word in file_contents.split_whitespace() {
+        word_set.insert(word);
+    }
+
+    for word in words {
+        if word_set.contains(word) {
+            return true;
+        }
+    }
+
+    false 
 }
 
 
