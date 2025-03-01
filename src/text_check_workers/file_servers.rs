@@ -1,7 +1,7 @@
 use std::{collections::HashSet, fs, sync::{mpsc, Arc}, thread};
 
 
-
+// Deprecated
 pub fn check_text(words: &Vec<&str>, file_name: &str) -> bool {
     let file_contents = fs::read_to_string(file_name).expect("Unable to read file");
     for word in words {
@@ -15,14 +15,9 @@ pub fn check_text(words: &Vec<&str>, file_name: &str) -> bool {
 
 
 pub fn check_text_new(words: &Vec<&str>, file_name: &str) -> bool {
-    // Чтение содержимого файла
     let file_contents = fs::read_to_string(file_name).expect("Unable to read file");
+    let word_set: HashSet<&str> = file_contents.split_whitespace().collect();
 
-    let mut word_set: HashSet<&str> = HashSet::new();
-
-    for word in file_contents.split_whitespace() {
-        word_set.insert(word);
-    }
 
     for word in words {
         if word_set.contains(word) {
@@ -35,6 +30,8 @@ pub fn check_text_new(words: &Vec<&str>, file_name: &str) -> bool {
 
 
 
+
+// Deprecated
 fn check_in_file(word: &str, file_content: &String) -> bool {
     for line in file_content.lines() {
         if word.contains(line) {

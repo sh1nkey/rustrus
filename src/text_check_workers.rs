@@ -119,13 +119,12 @@ mod benches {
 
         let chosen_categories: Vec<String> = vec!["sexual".to_string(), "strong".to_string()];
 
-        // Бенчмаркинг
         b.iter(|| {
             text_check_worker_mltr(
                 check_text_new,
                 &text,
                  chosen_categories.clone()
-            ) // Используем clone для передачи
+            )
         });
     }
 
@@ -140,7 +139,7 @@ mod benches {
 
         // Бенчмаркинг
         b.iter(|| {
-            text_check_worker(&text, &chosen_categories) // Используем clone для передачи
+            text_check_worker(&text, &chosen_categories)
         });
     }
 }
