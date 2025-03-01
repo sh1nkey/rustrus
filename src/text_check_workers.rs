@@ -20,12 +20,12 @@ pub fn text_check_worker_mltr(text: &str, chosen_categories: Vec<String>) -> Opt
     let words: Vec<String> = text.split_whitespace().map(String::from).collect(); // Сбор слов в Vec<String>
     let words_arc = Arc::new(words); // Оборачиваем в Arc
     
-    let (tx, rx) = mpsc::channel(); // Создаем канал
+    let (tx, rx) = mpsc::channel();
     let mut handles = vec![];
 
     for category in chosen_categories {
-        let words_clone = Arc::clone(&words_arc); // Клонируем Arc для передачи в поток
-        let tx_clone = tx.clone(); // Создаем клон отправителя для каждого потока
+        let words_clone = Arc::clone(&words_arc);
+        let tx_clone = tx.clone();
 
         if let Some(file_path) = FILES.get(category.as_str()) {
             let handle = thread::spawn(move || {
@@ -39,7 +39,7 @@ pub fn text_check_worker_mltr(text: &str, chosen_categories: Vec<String>) -> Opt
         }
     }
 
-    drop(tx); // Закрываем отправителя, чтобы избежать блокировок
+    drop(tx);
 
     // Обрабатываем результаты по мере их поступления
     for received in rx {
@@ -51,5 +51,50 @@ pub fn text_check_worker_mltr(text: &str, chosen_categories: Vec<String>) -> Opt
         handle.join().unwrap();
     }
 
-    None // Возвращаем None, если не найдено совпадений
+    None 
+}
+
+
+
+
+
+#[cfg(test)]
+mod tests {
+    use std::fs;
+
+    // Note this useful idiom: importing names from outer (for mod tests) scope.
+    use super::*;
+
+    #[test]
+    fn test_strong() {
+        let chosen_categories: Vec<String> = vec!["sexual".to_string(), "strong".to_string()];
+        let result = text_check_worker_mltr(
+            "блять", 
+            chosen_categories
+        );
+        assert_eq!(result.unwrap(), "strong");
+    }
+
+    #[test]
+    fn test_sexual() {
+        let chosen_categories: Vec<String> = vec!["sexual".to_string(), "strong".to_string()];
+        let result = text_check_worker_mltr(
+            "пизда", 
+            chosen_categories
+        );
+        assert_eq!(result.unwrap(), "sexual");
+    }
+
+
+    #[test]
+    fn test_nothing() {
+        let chosen_categories: Vec<String> = vec!["sexual".to_string(), "strong".to_string()];
+        let result = text_check_worker_mltr(
+            "ня ня ня :3", 
+            chosen_categories
+        );
+        assert_eq!(result, None);
+    }
+
+
 }
