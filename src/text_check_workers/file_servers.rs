@@ -14,13 +14,13 @@ pub fn check_text(words: &Vec<&str>, file_name: &str) -> bool {
 
 
 
-pub fn check_text_new(words: &Vec<&str>, file_name: &str) -> bool {
+pub fn check_text_new(words: &[String], file_name: &str) -> bool {
     let file_contents = fs::read_to_string(file_name).expect("Unable to read file");
     let word_set: HashSet<&str> = file_contents.split_whitespace().collect();
 
 
     for word in words {
-        if word_set.contains(word) {
+        if word_set.contains(word.as_str()) {
             return true;
         }
     }

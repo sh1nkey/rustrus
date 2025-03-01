@@ -20,9 +20,9 @@ pub fn text_check_worker(text: &str, chosen_categories: &Vec<&str>) -> Option<St
     None
 }
 
-type TextChecker = fn(&Vec<&str>, &str) -> bool;
+type TextChecker = fn(&[String], file_name: &str) -> bool;
 pub fn text_check_worker_mltr(check_text: TextChecker, text: &str, chosen_categories: Vec<String>) -> Option<String> {
-    let words: Vec<String> = text.split_whitespace().map(String::from).collect(); // Сбор слов в Vec<String>
+    let words: Vec<String> = text.split_whitespace().map(String::from).collect(); 
     let words_arc = Arc::new(words); // Оборачиваем в Arc
     
     let (tx, rx) = mpsc::channel();
@@ -34,8 +34,7 @@ pub fn text_check_worker_mltr(check_text: TextChecker, text: &str, chosen_catego
 
         if let Some(file_path) = FILES.get(category.as_str()) {
             let handle = thread::spawn(move || {
-                // Проверяем текст в потоке
-                if check_text(&words_clone.iter().map(|s| s.as_str()).collect::<Vec<&str>>(), file_path.clone()) {
+                if check_text(&words_clone.as_slice(), file_path.clone()) { // Здесь используем срез
                     // Если совпадение найдено, отправляем результат в канал
                     tx_clone.send(category).unwrap();
                 }
@@ -73,7 +72,7 @@ mod tests {
     fn test_strong() {
         let chosen_categories: Vec<String> = vec!["strong".to_string()];
         let result = text_check_worker_mltr(
-            check_text,
+            check_text_new,
             "блять", 
             chosen_categories
         );
@@ -84,7 +83,7 @@ mod tests {
     fn test_sexual() {
         let chosen_categories: Vec<String> = vec!["sexual".to_string()];
         let result = text_check_worker_mltr(
-            check_text,
+            check_text_new,
             "пизда", 
             chosen_categories
         );
@@ -96,7 +95,7 @@ mod tests {
     fn test_nothing() {
         let chosen_categories: Vec<String> = vec!["sexual".to_string()];
         let result = text_check_worker_mltr(
-            check_text,
+            check_text_new,
             "ня ня ня :3", 
             chosen_categories
         );
